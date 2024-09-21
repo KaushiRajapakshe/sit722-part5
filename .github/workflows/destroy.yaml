@@ -45,7 +45,7 @@ jobs:
   
       # Destroy Terraform
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve -var "resource_group_name=${{ vars.resource_group_name }}" -var "location=${{ vars.location }}" -var "app_name=${{ vars.app_name }}" -var "kubernetes_version=${{ vars.kubernetes_version }}"
+        run: terraform destroy -auto-approve
         working-directory: scripts/terraform  
 
       - name: Refresh terraform
