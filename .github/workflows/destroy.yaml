@@ -38,6 +38,10 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.6
+      
+      - name: Terraform init
+        run: terraform init
+        working-directory: scripts/terraform
 
       # Destroy Terraform
       - name: Terraform Destroy
