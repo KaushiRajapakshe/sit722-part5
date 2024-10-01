@@ -12,9 +12,6 @@ on:
   # Allows deployment to be invoked manually through the GitHub Actions user interface.
   #
   workflow_dispatch: 
-permissions:
-  id-token: write
-  contents: read
   
 jobs:
 
@@ -28,21 +25,7 @@ jobs:
 
       # Azure login using Service Principal credentials from GitHub Secrets
       - name: Azure Login
-        uses: azure/login@v2
-        with:
-          auth-type: SERVICE_PRINCIPAL
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          enable-AzPSSession: true
-
-      # Azure CLI
-      - name: Azure CLI script
-        uses: azure/cli@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az account show
+        run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
 
       # Run az cli commands
       - name: List Azure Resource Groups
