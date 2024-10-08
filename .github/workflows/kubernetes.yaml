@@ -1,0 +1,56 @@
+# 
+# GitHub Actions workflow.
+#
+# Deploy to Kubernetes.
+#
+
+name: Kubernetes
+on:
+  #
+  # Allows deployment to be invoked manually through the GitHub Actions user interface.
+  #
+  workflow_dispatch: 
+  
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      
+      # Checks-out your repository under $GITHUB_WORKSPACE.
+      - uses: actions/checkout@v3
+
+      # Azure login using Service Principal credentials from GitHub Secrets
+      # Previously : az ad sp create-for-rbac --name "Deakin labs DS - 1216" --role Owner --scopes /subscriptions/1af860c3-e4f4-4c2c-9b63-46be27b4406b
+      # creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Azure Login
+        # uses: azure/login@v1
+        # with:
+        #   creds: ${{ secrets.AZURE_CREDENTIALS }}
+        run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+
+      #
+      # Installs Kubectl and connects it to the cluster.
+      #
+      # https://github.com/marketplace/actions/kubernetes-cli-kubectl
+      #
+      - uses: tale/kubectl-action@v1
+        with:
+          base64-kube-config: ${{ secrets.KUBE_CONFIG }}
+          kubectl-version: v1.24.2
+
+      - name: Test kubectl pods
+        run: kubectl get pods
+
+      - name: Test kubectl deployments
+        run: kubectl get deployments
+
+      - name: Test kubectl services
+        run: kubectl get services
+
+      # 
+      # Test Access.
+      #
+      - name: Test kubectl access
+        run: kubectl get nodes
